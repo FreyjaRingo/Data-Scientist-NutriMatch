@@ -1,0 +1,14 @@
+- Akuisisi Data (Data Gathering)
+- ​Penilaian Kualitas Data (Data Assessing)
+- ​Pembersihan Data Manual (Data Cleaning)
+- ​Penyusunan Data Dictionary
+- ​Analisis Data Eksploratif (Exploratory Data Analysis)
+- ​Analisis Eksplanatori dan Visualisasi Data
+- ​Penerjemahan Formulasi Medis (BMR/TDEE) ke Algoritma  
+- ​Feature Engineering untuk Profil Pengguna dan Target Kesehatan
+- ​Perancangan Logika Filtrasi Alergen Dinamis  
+- ​Implementasi A/B Testing menggunakan Python
+- ​Pengembangan Dashboard Interaktif (Streamlit)
+- ​Deployment Dashboard ke Streamlit Cloud
+- ​Evaluasi Performa Model dan Metrik Keberhasilan  
+- ​Penyusunan Laporan Teknis Komprehensif (PDF)

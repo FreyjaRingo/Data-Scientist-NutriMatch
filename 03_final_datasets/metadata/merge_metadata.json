@@ -1,0 +1,28 @@
+{
+  "food_master_path": "D:\\PPL 1\\DBD\\orang_a\\nutrimatch-capstone-dsA_20260526\\nutrimatch-capstone-dsA\\data\\processed\\food_master_terbaru.csv",
+  "food_master_score": 15,
+  "food_master_columns": [
+    "food_id",
+    "food_name",
+    "calories_100g",
+    "protein_100g",
+    "fat_100g",
+    "carbohydrate_100g",
+    "source",
+    "image_url",
+    "zero_calorie_flag",
+    "calorie_inconsistent_flag",
+    "calorie_macro_diff",
+    "cooking_category",
+    "main_ingredient",
+    "meal_time"
+  ],
+  "conservative_unknown": true,
+  "outputs": {
+    "train_ready": "D:\\PPL 1\\DBD\\orang_b\\outputs\\merged\\train_ready_dataset.csv",
+    "merge_summary": "D:\\PPL 1\\DBD\\orang_b\\outputs\\merged\\merge_summary.csv",
+    "food_master_standardized": "D:\\PPL 1\\DBD\\orang_b\\outputs\\merged\\food_master_standardized.csv",
+    "allergen_labels_aggregated": "D:\\PPL 1\\DBD\\orang_b\\outputs\\merged\\allergen_labels_aggregated.csv",
+    "metadata": "D:\\PPL 1\\DBD\\orang_b\\outputs\\merged\\merge_metadata.json"
+  }
+}

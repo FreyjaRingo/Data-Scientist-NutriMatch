@@ -1,0 +1,15 @@
+{
+  "dataset": "streamlit_dashboard\\data\\train_ready_dataset.csv",
+  "rows_checked": 484,
+  "summary": {
+    "not_checked": 469,
+    "accessible": 13,
+    "blocked_or_error": 2
+  },
+  "seconds": null,
+  "output_csv": "streamlit_dashboard\\data\\image_access_check.csv",
+  "notes": [
+    "Report rows were synchronized after manual real-food curation.",
+    "Rows with changed or newly added image URLs are marked not_checked until the live checker is rerun."
+  ]
+}

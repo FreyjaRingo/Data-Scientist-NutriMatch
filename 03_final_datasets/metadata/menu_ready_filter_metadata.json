@@ -1,0 +1,76 @@
+{
+  "rule_version": "menu_ready_filter_v1",
+  "train_ready_dataset": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset.csv",
+  "full_audit_dataset": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset_full_audit.csv",
+  "summary": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\menu_ready_filter_summary.csv",
+  "rows_audit_all_items": 1332,
+  "rows_train_ready_recommendable": 975,
+  "rows_removed_not_recommendable": 357,
+  "new_dataset_sources_checked": [
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\extracted\\archive (1)\\Multi_Cuisine_Recipe_Dataset.csv",
+      "exists": true,
+      "size_bytes": 951553
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\extracted\\archive (2)\\recipes_master.csv",
+      "exists": true,
+      "size_bytes": 1478003
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\extracted\\archive (2)\\recipe_ingredients.csv",
+      "exists": true,
+      "size_bytes": 3712143
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\extracted\\archive (2)\\recipe_nutrition.csv",
+      "exists": true,
+      "size_bytes": 455981
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\extracted\\archive (4)\\NutritionalFacts_Fruit_Vegetables_Seafood.csv",
+      "exists": true,
+      "size_bytes": 8081
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\dish_ingredients.csv",
+      "exists": true,
+      "size_bytes": 2286588
+    },
+    {
+      "path": "D:\\PPL 1\\DBD\\new datasets\\dish_nutrition_values.csv",
+      "exists": true,
+      "size_bytes": 260656
+    }
+  ],
+  "notes": [
+    "train_ready_dataset.csv is filtered to items suitable for recommendation: prepared menu items, fruits, vegetables, snacks, drinks, and edible staples.",
+    "train_ready_dataset_full_audit.csv keeps all source rows with flags and exclusion reasons for reporting and review.",
+    "New recipe datasets are used as menu-reference signals. They are not appended as new food rows because several sources do not share the same per-100g nutrition basis and some dish datasets do not include dish names.",
+    "Raw ingredients, condiments, seasoning components, uncooked staples, and raw animal proteins are excluded from the main train-ready file.",
+    "Halal status is rule-based from food names and ingredient text. halal_candidate is not a formal halal certification.",
+    "non_halal marks explicit pork/dog/alcohol keywords. needs_review marks sensitive or uncommon animal items that should not be recommended in halal-only mode without manual review."
+  ],
+  "added_columns": [
+    "context_correction_notes",
+    "menu_reference_match",
+    "menu_reference_source",
+    "menu_reference_title",
+    "menu_reference_category",
+    "menu_reference_meal_time",
+    "ingredient_only_flag",
+    "raw_ingredient_flag",
+    "is_recommendable_food",
+    "recommendation_item_type",
+    "recommendation_confidence",
+    "recommendation_exclusion_reason",
+    "halal_status",
+    "is_halal_candidate",
+    "contains_non_halal_ingredient",
+    "non_halal_ingredient_tags",
+    "halal_review_reason",
+    "halal_confidence",
+    "halal_rule_version",
+    "menu_ready_rule_version"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "sync_version": "train_ready_v6_sync_v1",
+  "source_path": "C:\\Users\\Gateway\\Downloads\\train_ready_dataset_v6.csv",
+  "train_ready_dataset": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset.csv",
+  "full_audit_dataset": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset_full_audit.csv",
+  "rows": 591,
+  "columns": 75,
+  "new_pairing_columns": [
+    "pairing_group",
+    "pairing_role",
+    "pairing_notes",
+    "pairing_suitability_notes",
+    "cleaning_action",
+    "cleaning_reason",
+    "meal_template_role",
+    "meal_combo_valid"
+  ],
+  "notes": [
+    "train_ready_dataset.csv is synchronized from the teammate-updated train_ready_dataset_v6.csv.",
+    "Matching is based on food_name_clean because v6 food_id values were re-indexed after cleaning.",
+    "train_ready_dataset_full_audit.csv keeps previously audited rows and marks rows absent from v6 as cleaning_action=drop."
+  ]
+}

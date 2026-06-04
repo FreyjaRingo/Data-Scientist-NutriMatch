@@ -1,0 +1,6 @@
+path,item,status,evidence,notes
+Data Scientist,Dashboard interaktif,Selesai,orang_b/dashboard/nutrimatch_data_science_dashboard.html,Dashboard HTML interaktif untuk eksplorasi dataset v6, pairing, halal status, meal time, dan image refresh.
+Data Scientist,Feature engineering,Selesai,orang_b/docs/feature_engineering_summary.md,Feature engineering mencakup alergi, kategori makanan, base ingredient, meal time, halal guardrail, pairing, dan image quality.
+Data Scientist,Deployment,Selesai,orang_b/docs/deployment_notes.md,Dataset siap pakai disiapkan untuk repo Data Science dan folder data/ready repo gabungan NutriMatch.
+Data Scientist,A/B testing,Siap dieksekusi,orang_b/docs/ab_testing_plan.md,Rencana A/B testing membandingkan baseline nutrisi dengan rekomendasi feature-rich.
+Data Scientist,Laporan teknis komprehensif,Selesai,orang_b/docs/technical_report_data_science.md,Laporan teknis merangkum sumber data, cleaning, feature engineering, deployment, dashboard, risiko, dan output final.

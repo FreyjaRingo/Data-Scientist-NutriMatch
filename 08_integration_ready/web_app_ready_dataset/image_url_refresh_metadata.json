@@ -1,0 +1,15 @@
+{
+  "rule_version": "google_image_refresh_v1",
+  "dataset_path": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset.csv",
+  "rows": 591,
+  "checked_rows": 591,
+  "broken_before_refresh": 116,
+  "refreshed_rows": 116,
+  "remaining_needs_review": 0,
+  "notes": [
+    "Broken/invalid image URLs are refreshed from manual Wikimedia replacements first, then Google Images search result candidates, web-image fallback candidates, and Wikimedia Commons API candidates.",
+    "Search candidates are used only when the resulting URL passes an HTTP image validation check.",
+    "When live image search is unavailable or unstable, remaining broken links are replaced with validated Wikimedia category fallback images.",
+    "image_url_status=refreshed means the original URL was replaced during this pass."
+  ]
+}

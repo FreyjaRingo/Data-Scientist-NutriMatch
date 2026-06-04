@@ -1,0 +1,28 @@
+{
+  "rule_version": "food_context_rules_v1",
+  "dataset_path": "D:\\PPL 1\\DBD\\orang_b\\final_datasets\\train_ready_dataset.csv",
+  "rows": 1332,
+  "added_columns": [
+    "food_category",
+    "food_category_source",
+    "base_ingredient",
+    "base_ingredient_tags",
+    "suitable_breakfast",
+    "suitable_lunch",
+    "suitable_dinner",
+    "meal_time_tags",
+    "primary_meal_time",
+    "feature_rule_version",
+    "recipe_reference_match",
+    "recipe_reference_source",
+    "recipe_reference_title",
+    "recipe_ingredients_reference"
+  ],
+  "notes": [
+    "Features are rule-based and intended to improve recommendation diversity.",
+    "When available, Orang A columns cooking_category, main_ingredient, and meal_time are used as stronger context signals.",
+    "Recipe references from Dataset/archive through Dataset/archive (3) are used when title matching is available.",
+    "Meal time is represented as both multilabel booleans and a primary class.",
+    "contains_unknown should still be used as an allergy safety guardrail."
+  ]
+}

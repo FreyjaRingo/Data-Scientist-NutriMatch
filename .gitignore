@@ -1,0 +1,28 @@
+# Python/runtime noise
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.venv/
+venv/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Large raw dataset archives/extractions are documented via dataset source links
+# and MANIFEST.csv, but should not be pushed to regular GitHub.
+01_original_datasets/orang_b_raw_datasets/
+01_original_datasets/raw_archives/
+01_original_datasets/new_datasets/extracted/
+01_original_datasets/new_datasets/*.zip
+*.zip
+*.7z
+*.rar
+
+# Local generated cache/output folders
+.streamlit/
+.next/
+node_modules/
+06_dashboard/publish_ready/
