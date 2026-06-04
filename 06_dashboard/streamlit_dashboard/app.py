@@ -20,9 +20,18 @@ REPO_ROOT = APP_DIR.parent
 DATASET_CANDIDATES = [
     os.environ.get("NUTRIMATCH_DATASET_PATH"),
     APP_DIR / "data" / "train_ready_dataset.csv",
+    APP_DIR.parent.parent / "03_final_datasets" / "main" / "train_ready_dataset.csv",
     REPO_ROOT / "orang_b" / "final_datasets" / "train_ready_dataset.csv",
     REPO_ROOT / "data" / "ready" / "train_ready_dataset.csv",
     REPO_ROOT / "train_ready_dataset.csv",
+]
+
+PROFILE_SCHEMA_CANDIDATES = [
+    os.environ.get("NUTRIMATCH_PROFILE_SCHEMA_PATH"),
+    APP_DIR / "data" / "user_profile_features_schema.csv",
+    APP_DIR.parent.parent / "03_final_datasets" / "main" / "user_profile_features_schema.csv",
+    REPO_ROOT / "data" / "ready" / "user_profile_features_schema.csv",
+    REPO_ROOT / "user_profile_features_schema.csv",
 ]
 
 
@@ -34,6 +43,20 @@ NUMERIC_COLUMNS = [
     "calorie_macro_diff",
     "allergen_match_count",
     "recommendation_confidence",
+]
+
+PROFILE_NUMERIC_COLUMNS = [
+    "age",
+    "height_cm",
+    "weight_kg",
+    "bmr",
+    "tdee",
+    "target_calorie",
+    "protein_target_g",
+    "fat_target_g",
+    "carb_target_g",
+    "total_macro_kcal",
+    "macro_cal_diff",
 ]
 
 BOOLEAN_COLUMNS = [
@@ -58,6 +81,16 @@ def find_dataset_path() -> Path:
             return path
     searched = "\n".join(f"- {Path(p)}" for p in DATASET_CANDIDATES if p)
     raise FileNotFoundError(f"Dataset tidak ditemukan. Lokasi yang dicek:\n{searched}")
+
+
+def find_optional_path(candidates: list[object]) -> Path | None:
+    for candidate in candidates:
+        if not candidate:
+            continue
+        path = Path(candidate)
+        if path.exists():
+            return path
+    return None
 
 
 def split_tags(value: object) -> list[str]:
@@ -152,6 +185,17 @@ def load_dataset(path: str) -> pd.DataFrame:
         + combo_valid * 0.10
         + halal_candidate * 0.05
     ) * 100
+    return df
+
+
+@st.cache_data(show_spinner=False)
+def load_profile_schema(path: str | None) -> pd.DataFrame:
+    if not path:
+        return pd.DataFrame()
+    df = pd.read_csv(path)
+    for column in PROFILE_NUMERIC_COLUMNS:
+        if column in df.columns:
+            df[column] = pd.to_numeric(df[column], errors="coerce")
     return df
 
 
@@ -407,6 +451,186 @@ def show_explorer(filtered: pd.DataFrame) -> None:
                     st.caption(str(row.get("food_name", row.get("_display_name", ""))))
 
 
+def show_nutrition_allergy(filtered: pd.DataFrame, profile_df: pd.DataFrame) -> None:
+    st.subheader("Nutrisi Makanan")
+    st.caption(
+        "Bagian ini membaca nutrisi dari dataset makanan. BMR, TDEE, dan target makro berasal dari schema profil user di bagian bawah."
+    )
+
+    macro_cols = st.columns(4)
+    with macro_cols[0]:
+        if "calories_100g" in filtered.columns:
+            metric_card("Rata-rata kalori", f"{filtered['calories_100g'].mean():.1f} kcal/100g")
+    with macro_cols[1]:
+        if "protein_100g" in filtered.columns:
+            metric_card("Rata-rata protein", f"{filtered['protein_100g'].mean():.1f} g/100g")
+    with macro_cols[2]:
+        if "fat_100g" in filtered.columns:
+            metric_card("Rata-rata lemak", f"{filtered['fat_100g'].mean():.1f} g/100g")
+    with macro_cols[3]:
+        if "carbohydrate_100g" in filtered.columns:
+            metric_card("Rata-rata karbo", f"{filtered['carbohydrate_100g'].mean():.1f} g/100g")
+
+    chart_cols = st.columns(2)
+    with chart_cols[0]:
+        if "calories_100g" in filtered.columns:
+            st.plotly_chart(
+                px.histogram(
+                    filtered,
+                    x="calories_100g",
+                    nbins=30,
+                    title="Distribusi kalori per 100g",
+                    color_discrete_sequence=["#0f766e"],
+                ),
+                use_container_width=True,
+            )
+    with chart_cols[1]:
+        if {"protein_100g", "carbohydrate_100g", "fat_100g"}.issubset(filtered.columns):
+            macro_mean = pd.DataFrame(
+                {
+                    "macro": ["Protein", "Karbohidrat", "Lemak"],
+                    "g_per_100g": [
+                        filtered["protein_100g"].mean(),
+                        filtered["carbohydrate_100g"].mean(),
+                        filtered["fat_100g"].mean(),
+                    ],
+                }
+            )
+            st.plotly_chart(
+                px.bar(
+                    macro_mean,
+                    x="macro",
+                    y="g_per_100g",
+                    title="Rata-rata makro per 100g",
+                    color="macro",
+                    color_discrete_sequence=px.colors.qualitative.Set2,
+                ).update_layout(showlegend=False),
+                use_container_width=True,
+            )
+
+    st.subheader("Alergen")
+    allergen_columns = [
+        column
+        for column in [
+            "contains_gluten",
+            "contains_dairy",
+            "contains_nuts",
+            "contains_peanut",
+            "contains_seafood",
+            "contains_egg",
+            "contains_soy",
+            "contains_celery",
+            "contains_mustard",
+            "contains_sesame",
+            "contains_sulfite",
+            "contains_other",
+            "contains_unknown",
+        ]
+        if column in filtered.columns
+    ]
+
+    if allergen_columns:
+        allergen_counts = pd.DataFrame(
+            {
+                "allergen_flag": allergen_columns,
+                "count": [int(bool_series(filtered[column]).sum()) for column in allergen_columns],
+            }
+        ).sort_values("count", ascending=False)
+        st.plotly_chart(
+            px.bar(
+                allergen_counts,
+                x="count",
+                y="allergen_flag",
+                orientation="h",
+                title="Jumlah item berdasarkan flag alergen",
+                color="count",
+                color_continuous_scale="Oranges",
+            ).update_layout(yaxis={"categoryorder": "total ascending"}, showlegend=False),
+            use_container_width=True,
+        )
+
+        allergen_table_cols = [
+            column
+            for column in [
+                "food_name",
+                "confidence",
+                "allergen_sources",
+                "label_sources",
+                "contains_gluten",
+                "contains_dairy",
+                "contains_peanut",
+                "contains_seafood",
+                "contains_egg",
+                "contains_soy",
+                "contains_unknown",
+            ]
+            if column in filtered.columns
+        ]
+        st.dataframe(filtered[allergen_table_cols].head(250), use_container_width=True, hide_index=True)
+    else:
+        st.info("Kolom flag alergen tidak ditemukan di dataset aktif.")
+
+    st.subheader("Schema Profil User: BMR, TDEE, dan Target Makro")
+    if profile_df.empty:
+        st.info(
+            "File `user_profile_features_schema.csv` belum ditemukan. BMR/TDEE bukan kolom makanan, jadi perlu file schema profil user untuk menampilkannya."
+        )
+        return
+
+    profile_cols = st.columns(4)
+    with profile_cols[0]:
+        if "bmr" in profile_df.columns:
+            metric_card("Rata-rata BMR", f"{profile_df['bmr'].mean():.1f}")
+    with profile_cols[1]:
+        if "tdee" in profile_df.columns:
+            metric_card("Rata-rata TDEE", f"{profile_df['tdee'].mean():.1f}")
+    with profile_cols[2]:
+        if "target_calorie" in profile_df.columns:
+            metric_card("Rata-rata target kalori", f"{profile_df['target_calorie'].mean():.1f}")
+    with profile_cols[3]:
+        metric_card("Sample profil", f"{len(profile_df):,}")
+
+    profile_chart_cols = st.columns(2)
+    with profile_chart_cols[0]:
+        if "goal" in profile_df.columns:
+            st.plotly_chart(
+                px.bar(count_values(profile_df, "goal"), x="goal", y="count", title="Distribusi goal user"),
+                use_container_width=True,
+            )
+    with profile_chart_cols[1]:
+        if "activity_level" in profile_df.columns:
+            st.plotly_chart(
+                px.bar(
+                    count_values(profile_df, "activity_level"),
+                    x="activity_level",
+                    y="count",
+                    title="Distribusi activity level",
+                ),
+                use_container_width=True,
+            )
+
+    display_cols = [
+        column
+        for column in [
+            "age",
+            "gender",
+            "height_cm",
+            "weight_kg",
+            "activity_level",
+            "goal",
+            "bmr",
+            "tdee",
+            "target_calorie",
+            "protein_target_g",
+            "fat_target_g",
+            "carb_target_g",
+            "allergy_vector",
+        ]
+        if column in profile_df.columns
+    ]
+    st.dataframe(profile_df[display_cols].head(250), use_container_width=True, hide_index=True)
+
+
 def show_recommendation_qa(filtered: pd.DataFrame) -> None:
     st.subheader("Recommendation QA")
     st.caption(
@@ -501,7 +725,9 @@ def show_dataset_audit(filtered: pd.DataFrame) -> None:
 
 def main() -> None:
     dataset_path = find_dataset_path()
+    profile_schema_path = find_optional_path(PROFILE_SCHEMA_CANDIDATES)
     df = load_dataset(str(dataset_path))
+    profile_df = load_profile_schema(str(profile_schema_path) if profile_schema_path else None)
 
     st.markdown(
         """
@@ -515,21 +741,28 @@ def main() -> None:
     )
 
     st.title("NutriMatch Data Science Dashboard")
-    st.caption(f"Dataset aktif: {dataset_path.name} | {len(df):,} item train-ready")
+    profile_caption = (
+        f" | Schema profil: {profile_schema_path.name}"
+        if profile_schema_path
+        else " | Schema profil: tidak ditemukan"
+    )
+    st.caption(f"Dataset aktif: {dataset_path.name} | {len(df):,} item train-ready{profile_caption}")
 
     filtered = apply_filters(df)
     if filtered.empty:
         st.warning("Tidak ada data yang cocok dengan filter saat ini.")
         st.stop()
 
-    tabs = st.tabs(["Overview", "Food Explorer", "Recommendation QA", "Dataset Audit"])
+    tabs = st.tabs(["Overview", "Nutrisi & Alergi", "Food Explorer", "Recommendation QA", "Dataset Audit"])
     with tabs[0]:
         show_overview(df, filtered)
     with tabs[1]:
-        show_explorer(filtered)
+        show_nutrition_allergy(filtered, profile_df)
     with tabs[2]:
-        show_recommendation_qa(filtered)
+        show_explorer(filtered)
     with tabs[3]:
+        show_recommendation_qa(filtered)
+    with tabs[4]:
         show_dataset_audit(filtered)
 
 
